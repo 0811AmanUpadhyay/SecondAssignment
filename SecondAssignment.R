@@ -1,24 +1,33 @@
-makeVector <- function(x = numeric()) {
-  m <- NULL
-  set <- function(y) {
-    x <<- y
-    m <<- NULL
+makeCacheMatrix <- function(x = matrix()) {
+  
+  xinv<- NULL
+  set<-function(y) {
+    x<<-matrix(y)
+    xinv<<- NULL
   }
   get <- function() x
-  setmean <- function(mean) m <<- mean
-  getmean <- function() m
+  setinv<- function(matinv) xinv<<-matinv
+  getinv<- function() xinv
   list(set = set, get = get,
-       setmean = setmean,
-       getmean = getmean)
+       setinv = setinv,
+       getinv = getinv)
 }
-cachemean <- function(x, ...) {
-  m <- x$getmean()
-  if(!is.null(m)) {
-    message("getting cached data")
-    return(m)
+
+
+## Function that solves for the inverse
+## first determines if inverse has already been calculated and cached
+## if not calculates inverse using solve()
+## if already calculate retrieves cached inverse
+
+cacheSolve <- function(x, ...) {
+  ## Return a matrix that is the inverse of 'x'
+  xinv <- x$getinv()
+  if (!is.null(xinv)) {
+    message("Getting cached data ...")
+    return(xinv)
   }
-  data <- x$get()
-  m <- mean(data, ...)
-  x$setmean(m)
-  m
+  data <-x$get()
+  xinv<-solve(data)
+  x$setinv(xinv)
+  xinv
 }
